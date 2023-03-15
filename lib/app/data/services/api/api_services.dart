@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:ai_image_generator/app/data/services/api/api_key.dart';
+import 'package:ai_image_generator/app/ui/theme/color_const.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
@@ -21,7 +23,7 @@ class Api {
       var data = jsonDecode(res.body.toString());
       return data['data'][0]['url'].toString();
     } else {
-      print("Failed to fetch image");
+      Get.snackbar("Error", "failed to fetch image", colorText: whiteColor);
     }
   }
 }

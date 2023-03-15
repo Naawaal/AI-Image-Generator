@@ -72,6 +72,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                           child: DropdownButton(
                             icon: const Icon(Icons.expand_circle_down_outlined,
                                 color: btnColor),
+                            value: dropValue,
                             hint: const Text("Select Size"),
                             items: List.generate(
                               sizes.length,
@@ -99,6 +100,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       onPressed: () async {
                         if (textController.text.isNotEmpty &&
                             dropValue!.isNotEmpty) {
+                          setState(() {
+                            isLoaded = false;
+                          });
                           image = await Api.generateImage(
                               textController.text, dropValue!);
                           setState(() {
@@ -130,7 +134,52 @@ class _HomepageScreenState extends State<HomepageScreen> {
             Expanded(
               flex: 4,
               child: isLoaded
-                  ? Image.network(image)
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Image.network(image, fit: BoxFit.contain),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text("Download"),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                                child: const Text("Share"),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
                   : Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
