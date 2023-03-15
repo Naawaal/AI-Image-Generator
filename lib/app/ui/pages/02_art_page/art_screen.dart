@@ -63,7 +63,11 @@ class _ArtScreenState extends State<ArtScreen> {
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
+            crossAxisCount: 2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            mainAxisExtent: 300,
+          ),
           itemCount: imgList.length,
           itemBuilder: (context, index) {
             return InkWell(
@@ -71,11 +75,15 @@ class _ArtScreenState extends State<ArtScreen> {
                 popImg(imgList[index]);
               },
               child: Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Image.file(imgList[index])),
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Image.file(
+                  imgList[index],
+                  fit: BoxFit.cover,
+                ),
+              ),
             );
           },
         ),
