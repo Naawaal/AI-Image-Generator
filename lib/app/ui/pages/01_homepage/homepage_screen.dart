@@ -1,3 +1,4 @@
+import 'package:ai_image_generator/app/data/services/api/api_services.dart';
 import 'package:ai_image_generator/app/ui/theme/color_const.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,8 +12,12 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
   var sizes = ["Small", "Medium", "Large"];
-  var value = ["256x256", "512x512", "1024x1024"];
+  var values = ["256x256", "512x512", "1024x1024"];
   String? dropValue;
+  String image = '';
+  var isLoaded = false;
+
+  var textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,13 +43,15 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     children: [
                       Expanded(
                         child: Container(
-                          height: 40,
+                          alignment: Alignment.center,
+                          height: 50,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                               color: whiteColor,
                               borderRadius: BorderRadius.circular(12)),
                           child: TextFormField(
+                            controller: textController,
                             decoration: const InputDecoration(
                               hintText: "eg 'lion on a champ' ",
                               border: InputBorder.none,
@@ -54,7 +61,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
                       ),
                       const SizedBox(width: 12),
                       Container(
-                        height: 44,
+                        height: 50,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 4),
                         decoration: BoxDecoration(
@@ -69,13 +76,17 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             items: List.generate(
                               sizes.length,
                               (index) => DropdownMenuItem(
-                                value: value[index],
+                                value: values[index],
                                 child: Text(
                                   sizes[index],
                                 ),
                               ),
                             ),
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              setState(() {
+                                dropValue = value.toString();
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -85,7 +96,22 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     width: Get.width,
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (textController.text.isNotEmpty &&
+                            dropValue!.isNotEmpty) {
+                          image = await Api.generateImage(
+                              textController.text, dropValue!);
+                          setState(() {
+                            isLoaded = true;
+                          });
+                        } else {
+                          Get.snackbar(
+                            "Invalid Promot",
+                            "please enter valid text and select sized",
+                            colorText: whiteColor,
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: btnColor,
                         shape: const StadiumBorder(),
@@ -103,9 +129,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
             ),
             Expanded(
               flex: 4,
-              child: Container(
-                color: Colors.amber,
-              ),
+              child: isLoaded
+                  ? Image.network(image)
+                  : Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: whiteColor,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/loader.gif"),
+                          const Text(
+                            "Waiting for image to be generated",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
